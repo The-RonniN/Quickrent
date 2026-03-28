@@ -182,4 +182,5 @@ export default function Hero({ navigate }) {
       </div>
     </>
   );
+  //this component is getting too big, can split into smaller ones if needed in future
 }
