@@ -433,3 +433,20 @@ cursor:pointer;
     </div>
   );
 }
+import axios from "axios";
+
+const handleSignup = async () => {
+  try {
+    const res = await axios.post("http://127.0.0.1:8000/api/signup/", {
+      full_name: fullName,
+      email: email,
+      phone: phone,
+      city: city,
+      password: password
+    });
+
+    alert("Account created successfully");
+  } catch (error) {
+    console.log(error);
+  }
+};
