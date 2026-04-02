@@ -176,7 +176,11 @@ export default function RentPage({ navigate, openAuth }) {
             return (
               <div className="rp-card" key={item.id}>
                 <div className="rp-card-img" style={{ background: item.isAvailable ? "linear-gradient(135deg,#ffe0cc,#ffb380)" : "linear-gradient(135deg,#f0f0f0,#e0e0e0)" }}>
-                  <span style={{ fontSize:"3rem" }}>{ICONS[item.category] || "📦"}</span>
+                  {item.images && item.images.length > 0 ? (
+                    <img src={item.images[0]} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    <span style={{ fontSize:"3rem" }}>{ICONS[item.category] || "📦"}</span>
+                  )}
                   {item.rating !== "New" && <span className="rp-tag" style={{ background:"#fff3e0", color:"#e65100" }}>⭐ {item.rating}</span>}
                   {item.rating === "New" && <span className="rp-tag" style={{ background:"#e8f5e9", color:"#2e7d32" }}>🆕 New</span>}
                   <button className="rp-wish" onClick={e => { e.stopPropagation(); if (!user) { openAuth("login"); return; } toggleWishlist(item.id); }}>

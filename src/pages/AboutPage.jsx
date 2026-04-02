@@ -1,4 +1,12 @@
+import rajPhoto from "../assets/IMG_20251210_010606.jpg";
+
 export default function AboutPage() {
+  const team = [
+    { img: rajPhoto, emoji: "👨‍💻", name: "Raj Mathpati", role: "Co-founder & CEO" },
+    { img: "/assets/tushar-photo.jpg" /* replace with Tushar's photo path */, emoji: "👨‍💻", name: "Tushar Shivde", role: "CMO" },
+    { img: "/assets/shrikant-photo.jpg" /* replace with Shrikant's photo path */, emoji: "🚀", name: "Shrikant Vasmale", role: "CTO" },
+  ];
+
   return (
     <>
       <style>{`
@@ -13,6 +21,8 @@ export default function AboutPage() {
         .ap-card p{color:#666;line-height:1.8;font-size:0.95rem;}
         .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
         .tc{background:#fff;border-radius:18px;padding:28px 16px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.05);}
+        .tc-photo-wrap{width:100%;border-radius:18px;overflow:hidden;margin-bottom:16px;}
+        .tc-photo{width:100%;height:200px;object-fit:cover;display:block;}
         .tc-emoji{font-size:2.8rem;margin-bottom:10px;}
         .tc-name{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:#1a1a1a;}
         .tc-role{font-size:0.8rem;color:#FF6B00;margin-top:3px;}
@@ -35,8 +45,15 @@ export default function AboutPage() {
           </div>
           <div style={{ fontFamily:"'Syne',sans-serif", fontSize:"1.3rem", fontWeight:800, color:"#1a1a1a", marginBottom:16 }}>Meet the Team</div>
           <div className="team-grid">
-            {[["👨‍💻","Aryan Mehta","Co-founder & CEO"],["👩‍💻","Priya Nair","Co-founder & CTO"],["🚀","Rohan Gupta","Head of Growth"]].map(([ic,n,r])=>(
-              <div className="tc" key={n}><div className="tc-emoji">{ic}</div><div className="tc-name">{n}</div><div className="tc-role">{r}</div></div>
+            {team.map(({ img, emoji, name, role }) => (
+              <div className="tc" key={name}>
+                <div className="tc-photo-wrap">
+                  <img src={img} alt={name} className="tc-photo" />
+                </div>
+                <div className="tc-emoji">{emoji}</div>
+                <div className="tc-name">{name}</div>
+                <div className="tc-role">{role}</div>
+              </div>
             ))}
           </div>
           <div className="vals">

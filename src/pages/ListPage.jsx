@@ -4,10 +4,30 @@ import { useApp, useAuth } from "../App";
 const CATS = ["Electronics","Vehicles","Party & Events","Sports & Outdoor","Tools & Equipment","Furniture & Appliances"];
 const CONDITIONS = ["Brand New","Excellent","Good","Fair"];
 
+const Field = ({ k, label, ph, type="text", full=true, form, u, errors }) => (
+  <div style={{ marginBottom:16, gridColumn: full ? "1/-1" : "auto" }}>
+    <label style={{ display:"block", fontFamily:"'DM Sans',sans-serif", fontSize:"0.78rem", color:"#666", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.5px" }}>{label}</label>
+    <input type={type === "numeric" ? "text" : type} inputMode={type === "numeric" ? "numeric" : undefined} placeholder={ph} value={form[k]} 
+      onChange={e => {
+        let val = e.target.value;
+        if (type === "numeric") {
+          val = val.replace(/[^0-9]/g, '');
+        }
+        u(k, val);
+      }} 
+      maxLength={(type === "text" || type === "numeric") ? "200" : undefined}
+      style={{ width:"100%", padding:"11px 14px", border:`1.5px solid ${errors[k]?"#e53e3e":"#e5e5e5"}`, borderRadius:10, fontFamily:"'DM Sans',sans-serif", fontSize:"0.92rem", outline:"none", background:"#fafafa", color:"#000" }}
+      onFocus={e => e.target.style.borderColor="#FF6B00"}
+      onBlur={e => e.target.style.borderColor=errors[k]?"#e53e3e":"#e5e5e5"} />
+    {errors[k] && <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:"0.75rem", color:"#e53e3e", marginTop:4 }}>⚠ {errors[k]}</div>}
+  </div>
+);
+
 export default function ListPage({ navigate, openAuth }) {
   const { addItem } = useApp();
   const { user } = useAuth();
-  const [form, setForm] = useState({ title:"", category:"Electronics", description:"", price:"", deposit:"", city:"", condition:"Good", availableFrom:"", availableTill:"" });
+  //date funcion added 
+  const [form, setForm] = useState({ title:"", category:"Electronics", description:"", price:"", deposit:"", city:"", condition:"Good", availableFrom: new Date().toISOString().split("T")[0], availableTill:"", images:[] });
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -55,9 +75,11 @@ export default function ListPage({ navigate, openAuth }) {
     if (!validate()) return;
     addItem({ ...form, price: +form.price, deposit: +form.deposit });
     setSuccess(true);
-    setForm({ title:"", category:"Electronics", description:"", price:"", deposit:"", city:"", condition:"Good", availableFrom:"", availableTill:"" });
+    setForm({ title:"", category:"Electronics", description:"", price:"", deposit:"", city:"", condition:"Good", availableFrom: new Date().toISOString().split("T")[0], availableTill:"", images:[] });
   };
 
+
+  
   if (success) {
     return (
       <div style={{ paddingTop:90, minHeight:"100vh", background:"#f7f7f7", display:"flex", alignItems:"center", justifyContent:"center", padding:"90px 20px 40px" }}>
@@ -81,16 +103,7 @@ export default function ListPage({ navigate, openAuth }) {
     );
   }
 
-  const Field = ({ k, label, ph, type="text", full=false }) => (
-    <div style={{ marginBottom:16, gridColumn: full ? "1/-1" : "auto" }}>
-      <label style={{ display:"block", fontFamily:"'DM Sans',sans-serif", fontSize:"0.78rem", color:"#666", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.5px" }}>{label}</label>
-      <input type={type} placeholder={ph} value={form[k]} onChange={e => u(k, e.target.value)}
-        style={{ width:"100%", padding:"11px 14px", border:`1.5px solid ${errors[k]?"#e53e3e":"#e5e5e5"}`, borderRadius:10, fontFamily:"'DM Sans',sans-serif", fontSize:"0.92rem", outline:"none", background:"#fafafa" }}
-        onFocus={e => e.target.style.borderColor="#FF6B00"}
-        onBlur={e => e.target.style.borderColor=errors[k]?"#e53e3e":"#e5e5e5"} />
-      {errors[k] && <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:"0.75rem", color:"#e53e3e", marginTop:4 }}>⚠ {errors[k]}</div>}
-    </div>
-  );
+
 
   return (
     <>
@@ -104,8 +117,10 @@ export default function ListPage({ navigate, openAuth }) {
         .lp-card{background:#fff;border-radius:22px;padding:32px;box-shadow:0 2px 18px rgba(0,0,0,0.06);}
         .lp-section-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#1a1a1a;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #f0f0f0;}
         .lp-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;}
-        .lp-select{width:100%;padding:"11px 14px";border:1.5px solid #e5e5e5;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.92rem;outline:none;background:#fafafa;cursor:pointer;margin-bottom:16px;}
-        .lp-textarea{width:100%;padding:11px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.92rem;outline:none;background:#fafafa;resize:vertical;margin-bottom:16px;}
+        input[type="text"], input[type="number"], input[type="date"] { color: #000 !important; }
+        input::placeholder { color: #999 !important; }
+        .lp-select{width:100%;padding:"11px 14px";border:1.5px solid #e5e5e5;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.92rem;outline:none;background:#fafafa;cursor:pointer;margin-bottom:16px;color:#000;}
+        .lp-textarea{width:100%;padding:11px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.92rem;outline:none;background:#fafafa;resize:vertical;margin-bottom:16px;color:#000;}
         .lp-submit{width:100%;padding:14px;background:#FF6B00;color:#fff;border:none;border-radius:50px;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;margin-top:8px;}
         .lp-submit:hover{background:#e05e00;transform:translateY(-1px);}
         .cond-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
@@ -124,7 +139,7 @@ export default function ListPage({ navigate, openAuth }) {
           <div className="lp-card">
             {/* Basic Info */}
             <div className="lp-section-title">📦 Item Details</div>
-            <Field k="title" label="Item Title *" ph="e.g. Sony A7III Camera" full />
+            <Field k="title" label="Item Title *" ph="e.g. Sony A7III Camera" full form={form} u={u} errors={errors} />
 
             <div style={{ marginBottom:16 }}>
               <label style={{ display:"block", fontFamily:"'DM Sans',sans-serif", fontSize:"0.78rem", color:"#666", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.5px" }}>Category *</label>
@@ -153,16 +168,47 @@ export default function ListPage({ navigate, openAuth }) {
             {/* Pricing */}
             <div className="lp-section-title">💰 Pricing</div>
             <div className="lp-grid">
-              <Field k="price" label="Rent per Day (₹) *" ph="e.g. 500" type="number" />
-              <Field k="deposit" label="Refundable Deposit (₹) *" ph="e.g. 2000" type="number" />
+              <Field k="price" label="Rent per Day (₹) *" ph="e.g. 500" type="numeric" form={form} u={u} errors={errors} />
+              <Field k="deposit" label="Refundable Deposit (₹) *" ph="e.g. 2000" type="numeric" form={form} u={u} errors={errors} />
             </div>
 
             {/* Location */}
             <div className="lp-section-title">📍 Location & Availability</div>
-            <Field k="city" label="City *" ph="Pune, Mumbai, Bangalore..." full />
-            <div className="lp-grid">
-              <Field k="availableFrom" label="Available From" type="date" />
-              <Field k="availableTill" label="Available Till" type="date" />
+            <Field k="city" label="City *" ph="Pune, Mumbai, Bangalore..." full form={form} u={u} errors={errors} />
+            {/* availabe form to till */}
+
+            <div className="lp-grid">      
+            <Field k="availableFrom" label="Available From" type="date" form={form} u={u} errors={errors} />
+              <Field k="availableTill" label="Available Till" type="date" form={form} u={u} errors={errors} />
+            </div>
+
+            {/* Photos */}
+            <div className="lp-section-title" style={{ marginTop: 24 }}>📸 Photos</div>
+            <div style={{ marginBottom: 16 }}>
+              <input 
+                type="file" 
+                multiple 
+                accept="image/*"
+                onChange={e => {
+                  const files = Array.from(e.target.files);
+                  const newImages = files.map(f => URL.createObjectURL(f));
+                  u("images", [...(form.images || []), ...newImages]);
+                }}
+                style={{ marginBottom: 12, width: "100%", padding: "8px", background: "#fff", borderRadius: 8, border: "1.5px solid #e5e5e5", fontFamily: "'DM Sans',sans-serif", fontSize: "0.9rem" }}
+              />
+              {form.images && form.images.length > 0 && (
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  {form.images.map((img, idx) => (
+                    <div key={idx} style={{ position: "relative", width: 80, height: 80 }}>
+                      <img src={img} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }} />
+                      <button 
+                        onClick={() => u("images", form.images.filter((_, i) => i !== idx))} 
+                        style={{ position: "absolute", top: -5, right: -5, background: "#e53e3e", color: "white", borderRadius: "50%", border: "none", width: 22, height: 22, cursor: "pointer", fontSize: 12, display:"flex", alignItems:"center", justifyContent:"center" }}
+                      >✕</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <button className="lp-submit" onClick={handleSubmit}>
