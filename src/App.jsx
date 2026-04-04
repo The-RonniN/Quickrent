@@ -6,6 +6,8 @@ import ListPage from "./pages/ListPage";
 import AboutPage from "./pages/AboutPage";
 import AuthModal from "./components/AuthModal";
 import ProfilePage from "./pages/ProfilePage";
+import ItemDetailPage from "./pages/ItemDetailPage";
+import BookingForm from "./components/BookingForm";
 
 export const AuthContext = createContext(null);
 export const AppContext = createContext(null);
