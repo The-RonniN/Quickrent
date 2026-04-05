@@ -161,7 +161,7 @@ padding:20px;
 background:#fff;
 border-radius:24px;
 width:100%;
-max-width:420px;
+max-width:650px;
 min-width:280px;
 box-shadow:0 24px 80px rgba(0,0,0,0.18);
 overflow:hidden;
@@ -173,10 +173,15 @@ max-width:95%;
 }
 }
 
-.qr-modal-head{
-background:#FF6B00;
-padding:32px 36px 26px;
-position:relative;
+.qr-modal-head {
+  background: #FF6B00;
+  height: 48px;              /* छोटा height */
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;           /* text छोटा */
+  color: #fff;
 }
 
 .qr-modal-close{
@@ -237,7 +242,7 @@ color:#FF6B00;
 .qr-role-desc{
 font-size:0.75rem;
 color:#aaa;
-margin-top:3px;
+margin-top:auto;
 }
 
 .qr-submit{
@@ -290,6 +295,12 @@ margin-bottom:14px;
 }
 
 .two-col{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.col{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:12px;
@@ -359,14 +370,16 @@ k="phone"
 label="Phone *"
 ph="9876543210"
 value={form.phone}
-onChange={u}
+onChange={(k, v) => u(k, v.replace(/[^0-9]/g, ""))}
 maxLength={10}
+type="tel"
 />
 
 </div>
 
 )}
 
+<div className="col">
 <Field
 k="email"
 label="Email Address *"
@@ -387,6 +400,8 @@ onChange={u}
 />
 
 )}
+
+</div>
 
 <Field
 k="password"
