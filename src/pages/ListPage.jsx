@@ -632,6 +632,70 @@ const CATS = [
 const CONDITIONS = ["Brand New", "Excellent", "Good", "Fair"];
 const MAX_IMAGES = 4;
 
+const Field = ({ k, label, ph, type = "text", full = false, min, form, u, errors }) => {
+  const value = form[k] ?? "";
+  const handleChange = (e) => {
+    const raw = e.currentTarget.value;
+    const nextValue = type === "number" ? raw.replace(/[^0-9]/g, "") : raw;
+    u(k, nextValue);
+  };
+
+  return (
+    <div style={{ marginBottom: 16, gridColumn: full ? "1/-1" : "auto" }}>
+      <label
+        style={{
+          display: "block",
+          fontFamily: "'DM Sans',sans-serif",
+          fontSize: "0.78rem",
+          color: "#666",
+          marginBottom: 5,
+          textTransform: "uppercase",
+          letterSpacing: "0.5px",
+        }}
+      >
+        {label}
+      </label>
+      <input
+        type={type === "number" ? "text" : type}
+        inputMode={type === "number" ? "numeric" : undefined}
+        placeholder={ph}
+        value={value}
+        min={type === "date" || type === "number" ? min : undefined}
+        onChange={handleChange}
+        autoComplete="off"
+        spellCheck={false}
+        style={{
+          width: "100%",
+          padding: "11px 14px",
+          border: `1.5px solid ${errors[k] ? "#e53e3e" : "#000000"}`,
+          borderRadius: 10,
+          fontFamily: "'DM Sans',sans-serif",
+          fontSize: "0.92rem",
+          outline: "none",
+          background: "#f5f5f5",
+          color: "#000",
+        }}
+        onFocus={(e) => (e.target.style.borderColor = "#FF6B00")}
+        onBlur={(e) =>
+          (e.target.style.borderColor = errors[k] ? "#e53e3e" : "#000000")
+        }
+      />
+      {errors[k] && (
+        <div
+          style={{
+            fontFamily: "'DM Sans',sans-serif",
+            fontSize: "0.75rem",
+            color: "#e53e3e",
+            marginTop: 4,
+          }}
+        >
+          ⚠ {errors[k]}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function ListPage({ navigate, openAuth }) {
   const { addItem } = useApp();
   const { user } = useAuth();
@@ -945,58 +1009,7 @@ export default function ListPage({ navigate, openAuth }) {
     );
   }
 
-  // ── Reusable field ──────────────────────────────────────────────
-  const Field = ({ k, label, ph, type = "text", full = false, min }) => (
-    <div style={{ marginBottom: 16, gridColumn: full ? "1/-1" : "auto" }}>
-      <label
-        style={{
-          display: "block",
-          fontFamily: "'DM Sans',sans-serif",
-          fontSize: "0.78rem",
-          color: "#666",
-          marginBottom: 5,
-          textTransform: "uppercase",
-          letterSpacing: "0.5px",
-        }}
-      >
-        {label}
-      </label>
-      <input
-        type={type}
-        placeholder={ph}
-        value={form[k]}
-        min={min}
-        onChange={(e) => u(k, e.target.value)}
-        style={{
-          width: "100%",
-          padding: "11px 14px",
-          border: `1.5px solid ${errors[k] ? "#e53e3e" : "#000000"}`,
-          borderRadius: 10,
-          fontFamily: "'DM Sans',sans-serif",
-          fontSize: "0.92rem",
-          outline: "none",
-          background: "#f5f5f5",
-          color: "#000",
-        }}
-        onFocus={(e) => (e.target.style.borderColor = "#FF6B00")}
-        onBlur={(e) =>
-          (e.target.style.borderColor = errors[k] ? "#e53e3e" : "#000000")
-        }
-      />
-      {errors[k] && (
-        <div
-          style={{
-            fontFamily: "'DM Sans',sans-serif",
-            fontSize: "0.75rem",
-            color: "#e53e3e",
-            marginTop: 4,
-          }}
-        >
-          ⚠ {errors[k]}
-        </div>
-      )}
-    </div>
-  );
+
 
   return (
     <>
@@ -1077,6 +1090,9 @@ export default function ListPage({ navigate, openAuth }) {
               label="Item Title *"
               ph="e.g. Sony A7III Camera with 28-70mm Kit Lens"
               full
+              form={form}
+              u={u}
+              errors={errors}
             />
 
             <div style={{ marginBottom: 16 }}>
@@ -1319,6 +1335,9 @@ export default function ListPage({ navigate, openAuth }) {
                 ph="e.g. 500"
                 type="number"
                 min="1"
+                form={form}
+                u={u}
+                errors={errors}
               />
               <Field
                 k="deposit"
@@ -1326,6 +1345,9 @@ export default function ListPage({ navigate, openAuth }) {
                 ph="e.g. 2000"
                 type="number"
                 min="0"
+                form={form}
+                u={u}
+                errors={errors}
               />
             </div>
 
@@ -1336,6 +1358,9 @@ export default function ListPage({ navigate, openAuth }) {
               label="City *"
               ph="Pune, Mumbai, Bangalore..."
               full
+              form={form}
+              u={u}
+              errors={errors}
             />
             <Field
               k="availableFrom"
@@ -1343,6 +1368,9 @@ export default function ListPage({ navigate, openAuth }) {
               type="date"
               min={new Date().toISOString().split("T")[0]}
               full
+              form={form}
+              u={u}
+              errors={errors}
             />
 
             <button className="lp-submit" onClick={handleSubmit}>
