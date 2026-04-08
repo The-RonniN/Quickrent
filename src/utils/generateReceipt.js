@@ -5,12 +5,17 @@
 export function generateReceiptPDF(rental) {
   const fmt = (date) =>
     new Date(date).toLocaleDateString("en-IN", {
-      day: "numeric", month: "long", year: "numeric",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
 
   const now = new Date().toLocaleString("en-IN", {
-    day: "numeric", month: "long", year: "numeric",
-    hour: "2-digit", minute: "2-digit",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
   const html = `
@@ -289,7 +294,7 @@ export function generateReceiptPDF(rental) {
     <tbody>
       <tr>
         <td>Rental Charge</td>
-        <td>₹${rental.itemPrice || (rental.totalPrice / rental.days)} × ${rental.days} day${rental.days > 1 ? "s" : ""}</td>
+        <td>₹${rental.itemPrice || rental.totalPrice / rental.days} × ${rental.days} day${rental.days > 1 ? "s" : ""}</td>
         <td>₹${rental.totalPrice}</td>
       </tr>
       <tr class="deposit-row">
@@ -304,7 +309,7 @@ export function generateReceiptPDF(rental) {
       </tr>
       <tr class="total-row">
         <td colspan="2">Total Paid</td>
-        <td>₹${rental.grandTotal || (rental.totalPrice + rental.deposit + (rental.platformFee || 0))}</td>
+        <td>₹${rental.grandTotal || rental.totalPrice + rental.deposit + (rental.platformFee || 0)}</td>
       </tr>
     </tbody>
   </table>

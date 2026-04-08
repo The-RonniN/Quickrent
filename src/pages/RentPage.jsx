@@ -57,18 +57,19 @@ export default function RentPage({ navigate, openAuth }) {
         .rp-hero h1{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:#fff;}
         .rp-hero p{font-family:'DM Sans',sans-serif;font-size:0.95rem;opacity:0.85;color:#fff;margin-top:6px;}
         .rp-search-bar{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
-        .rp-input{flex:1;min-width:180px;padding:13px 18px;border-radius:50px;border:none;font-family:'DM Sans',sans-serif;font-size:0.92rem;outline:none;}
-        .rp-select{padding:13px 18px;border-radius:50px;border:none;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;background:#fff;cursor:pointer;}
+        .rp-input{flex:1;min-width:180px;padding:13px 18px;border-radius:50px;border:none;font-family:'DM Sans',sans-serif;font-size:0.92rem;outline:none;background:#181515;color:#fff;}
+        .rp-input::placeholder{color:#999;}
+        .rp-select{padding:13px 18px;border-radius:50px;border:none;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;background:#181515;cursor:pointer;}
 
         .rp-cats{display:flex;gap:8px;padding:20px 48px 0;overflow-x:auto;scrollbar-width:none;}
         .rp-cats::-webkit-scrollbar{display:none;}
-        .rp-cat{padding:8px 18px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;transition:all .2s;white-space:nowrap;}
+        .rp-cat{padding:8px 18px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;border:1.5px solid #e7e5ed;background:#fff;transition:all .2s;white-space:nowrap;}
         .rp-cat.active{background:#FF6B00;color:#fff;border-color:#FF6B00;}
         .rp-cat:hover:not(.active){border-color:#FF6B00;color:#FF6B00;}
 
         .rp-bar{display:flex;justify-content:space-between;align-items:center;padding:16px 48px 0;flex-wrap:wrap;gap:8px;}
         .rp-count{font-family:'DM Sans',sans-serif;font-size:0.88rem;color:#666;}
-        .rp-sort{padding:8px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;cursor:pointer;background:#fff;}
+        .rp-sort{padding:8px 14px;border:1.5px solid #333;border-radius:px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;cursor:pointer;background:#181515;color:#e7e5ed;}
 
         .rp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px;padding:20px 48px 48px;max-width:1300px;margin:0 auto;}
 

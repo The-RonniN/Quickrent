@@ -10,7 +10,7 @@ export default function Footer({ navigate }) {
           background-color: #1a1a1a;
           color: #f0f0f0;
           font-family: 'DM Sans', sans-serif;
-          padding: 80px 48px 30px;
+          padding: 50px 48px 30px;
           border-top: 4px solid #FF6B00;
         }
 
@@ -120,6 +120,7 @@ export default function Footer({ navigate }) {
           color: rgba(255, 255, 255, 0.5);
           text-decoration: none;
           transition: color 0.2s;
+          cursor: pointer;
         }
 
         .footer-bottom-links a:hover {
@@ -203,9 +204,9 @@ export default function Footer({ navigate }) {
           © {currentYear} QuickRent. All rights reserved.
         </div>
         <div className="footer-bottom-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookie Policy</a>
+          <a onClick={() => navigate("privacy")}>Privacy Policy</a>
+          <a onClick={() => navigate("terms")}>Terms of Service</a>
+          <a onClick={() => navigate("cookie")}>Cookie Policy</a>
         </div>
       </div>
     </footer>

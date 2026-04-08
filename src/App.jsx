@@ -4,6 +4,9 @@ import Hero from "./pages/Hero";
 import RentPage from "./pages/RentPage";
 import ListPage from "./pages/ListPage";
 import AboutPage from "./pages/AboutPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
+import CookiePage from "./pages/CookiePage";
 import AuthModal from "./components/AuthModal";
 import ProfilePage from "./pages/ProfilePage";
 import ItemDetailPage from "./pages/ItemDetailPage";
@@ -60,6 +63,27 @@ export default function App() {
   useEffect(() => { localStorage.setItem("qr_items", JSON.stringify(items)); }, [items]);
   useEffect(() => { localStorage.setItem("qr_rentals", JSON.stringify(rentals)); }, [rentals]);
   useEffect(() => { localStorage.setItem("qr_wishlist", JSON.stringify(wishlist)); }, [wishlist]);
+
+  // Auto-release items when rent is over
+  useEffect(() => {
+    const checkExpiry = () => {
+      const todayString = new Date().toISOString().split("T")[0];
+      setItems(prev => {
+        let hasChanges = false;
+        const updated = prev.map(it => {
+          if (!it.isAvailable && it.rentedTill && it.rentedTill < todayString) {
+            hasChanges = true;
+            return { ...it, isAvailable: true, rentedTill: null };
+          }
+          return it;
+        });
+        return hasChanges ? updated : prev;
+      });
+    };
+    checkExpiry();
+    const timer = setInterval(checkExpiry, 60000 * 5); // check every 5 mins
+    return () => clearInterval(timer);
+  }, []);
 
   const handleSignup = (userData) => {
     const newUser = { ...userData, id: Date.now(), joinedDate: new Date().toLocaleDateString("en-IN") };
@@ -145,7 +169,10 @@ export default function App() {
           {currentPage === "home"    && <Hero navigate={navigate} />}
           {currentPage === "rent"    && <RentPage navigate={navigate} openAuth={setAuthModal} />}
           {currentPage === "list"    && <ListPage navigate={navigate} openAuth={setAuthModal} />}
-          {currentPage === "about"   && <AboutPage />}
+          {currentPage === "about"   && <AboutPage navigate={navigate} />}
+          {currentPage === "privacy" && <PrivacyPage />}
+          {currentPage === "terms"   && <TermsPage />}
+          {currentPage === "cookie"  && <CookiePage />}
           {currentPage === "profile" && <ProfilePage navigate={navigate} />}
           {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} switchMode={setAuthModal} />}
           <Footer navigate={navigate} />
