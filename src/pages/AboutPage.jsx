@@ -534,10 +534,10 @@ export default function AboutPage({ navigate }) {
 
         {/* ── HERO ── */}
         <section className="hero-section">
-          <div className="hero-eyebrow">
+          {/* <div className="hero-eyebrow">
             <span></span>
             India's Smartest Rental Platform
-          </div>
+          </div> */}
           <h1 className="hero-title">
             Rent Anything.<br /><span className="grad">Own Less. Live More.</span>
           </h1>
@@ -653,14 +653,14 @@ export default function AboutPage({ navigate }) {
         </section>
 
         {/* ── STATS ── */}
-        <section className="stats-section">
+        {/* <section className="stats-section">
           <div className="section-header reveal">
             <p className="section-label">Our Growth</p>
             <h2 className="section-title">Numbers That Tell the Story</h2>
           </div>
           <div className="stats-grid">
             {[
-              { target: 500, suffix: "+", label: "Active Users" },
+              { target: 20, suffix: "+", label: "Active Users" },
               { target: 1200, suffix: "+", label: "Products Listed" },
               { target: 30, suffix: "+", label: "Cities Connected" },
               { target: 95, suffix: "%", label: "User Satisfaction" },
@@ -674,7 +674,7 @@ export default function AboutPage({ navigate }) {
               </div>
             ))}
           </div>
-        </section>
+        </section> */}
 
         {/* ── TESTIMONIALS ── */}
         <section className="testimonials-section">

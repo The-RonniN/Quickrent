@@ -69,7 +69,7 @@ export default function RentPage({ navigate, openAuth }) {
 
         .rp-bar{display:flex;justify-content:space-between;align-items:center;padding:16px 48px 0;flex-wrap:wrap;gap:8px;}
         .rp-count{font-family:'DM Sans',sans-serif;font-size:0.88rem;color:#666;}
-        .rp-sort{padding:8px 14px;border:1.5px solid #333;border-radius:px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;cursor:pointer;background:#181515;color:#e7e5ed;}
+        .rp-sort{padding:8px 14px;border:1.5px solid #333;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;cursor:pointer;background:#181515;color:#e7e5ed;}
 
         .rp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px;padding:20px 48px 48px;max-width:1300px;margin:0 auto;}
 
