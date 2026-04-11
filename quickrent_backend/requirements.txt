@@ -1,0 +1,13 @@
+django>=4.2
+djangorestframework>=3.14
+django-cors-headers>=4.0
+mysqlclient>=2.1
+djangorestframework-simplejwt>=5.2
+python-decouple>=3.8
+cloudinary>=1.36
+django-cloudinary-storage>=0.3
+razorpay>=1.4
+celery>=5.3
+redis>=5.0
+sendgrid>=6.10
+Pillow>=10.0
