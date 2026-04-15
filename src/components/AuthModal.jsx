@@ -309,8 +309,12 @@ export default function AuthModal({ mode, onClose, switchMode }) {
         /* "No account" quick link inside error */
         .qr-error-link{color:#FF6B00;font-weight:600;cursor:pointer;text-decoration:underline;margin-left:4px;}
 
-        .qr-switch{text-align:center;margin-top:18px;font-family:'DM Sans';font-size:.9rem;}
+        .qr-footer-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;font-family:'DM Sans';font-size:.9rem;flex-wrap:wrap;}
+        .qr-footer-row--center{justify-content:center;}
+        .qr-switch{color:#666;}
         .qr-switch span{color:#FF6B00;font-weight:600;cursor:pointer;}
+        .qr-forgot-button{background:none;border:none;color:#FF6B00;font-weight:700;cursor:pointer;padding:0;font-size:inherit;}
+        .qr-forgot-button:hover{color:#e05e00;}
 
         @media(max-width:650px){
           .qr-grid{grid-template-columns:1fr;}
@@ -378,11 +382,24 @@ export default function AuthModal({ mode, onClose, switchMode }) {
               {loading ? "Please wait..." : mode === "signup" ? "Create Account →" : "Login →"}
             </button>
 
-            <div className="qr-switch">
-              {mode === "signup" ? (
-                <div>Already have an account? <span onClick={() => { setError(""); switchMode("login"); }}>Login</span></div>
+            <div className={`qr-footer-row ${mode === "signup" ? "qr-footer-row--center" : ""}`}>
+              {mode === "login" ? (
+                <>
+                  <button
+                    type="button"
+                    className="qr-forgot-button"
+                    onClick={() => { setError(""); switchMode("forgot"); }}
+                  >
+                    Forgot password?
+                  </button>
+                  <div className="qr-switch">
+                    New here? <span onClick={() => { setError(""); switchMode("signup"); }}>Create account</span>
+                  </div>
+                </>
               ) : (
-                <div>New here? <span onClick={() => { setError(""); switchMode("signup"); }}>Create account</span></div>
+                <div className="qr-switch">
+                  Already have an account? <span onClick={() => { setError(""); switchMode("login"); }}>Login</span>
+                </div>
               )}
             </div>
 

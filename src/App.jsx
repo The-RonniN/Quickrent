@@ -12,7 +12,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ItemDetailPage from "./pages/ItemDetailPage";
 import BookingForm from "./components/BookingForm";
 import Footer from "./components/footer";
-
+import ForgotPassword from "./components/ForgotPassword";
 
 
 export const AuthContext = createContext(null);
@@ -174,7 +174,10 @@ export default function App() {
           {currentPage === "terms"   && <TermsPage />}
           {currentPage === "cookie"  && <CookiePage />}
           {currentPage === "profile" && <ProfilePage navigate={navigate} />}
-          {authModal && <AuthModal mode={authModal} onClose={() => setAuthModal(null)} switchMode={setAuthModal} />}
+          {authModal === "forgot" && <ForgotPassword onBack={() => setAuthModal("login")} />}
+          {(authModal === "login" || authModal === "signup") && (
+            <AuthModal mode={authModal} onClose={() => setAuthModal(null)} switchMode={setAuthModal} />
+          )}
           <Footer navigate={navigate} />
         </div>
       </AppContext.Provider>
