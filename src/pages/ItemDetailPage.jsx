@@ -903,7 +903,7 @@
 //   );
 // }
 //-----------------------------------------------------------------------------
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp, useAuth } from "../App";
 import BookingForm from "../components/BookingForm";
 import { generateReceiptPDF } from "../utils/generateReceipt";
@@ -919,6 +919,7 @@ export default function ItemDetailPage({ item, navigate, openAuth }) {
   const [activeImg, setActiveImg] = useState(0);
   const [showBooking, setShowBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(null);
+  const [redirectSeconds, setRedirectSeconds] = useState(5);
 
   if (!item) return null;
 
@@ -942,6 +943,25 @@ export default function ItemDetailPage({ item, navigate, openAuth }) {
     setShowBooking(false);
     setBookingSuccess(receipt);
   };
+  useEffect(() => {
+    if (!bookingSuccess) return;
+    
+    //Time out for success message and redirection to home page after 5 seconds
+    setRedirectSeconds(5);
+    const intervalId = window.setInterval(() => {
+      setRedirectSeconds((prev) => Math.max(prev - 1, 0));
+    }, 1000);
+
+    const timeoutId = window.setTimeout(() => {
+      setBookingSuccess(null);
+      navigate("home");
+    }, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.clearTimeout(timeoutId);
+    };
+  }, [bookingSuccess, navigate]);
 
   return (
     <>
@@ -1346,6 +1366,9 @@ export default function ItemDetailPage({ item, navigate, openAuth }) {
                 <div className="suc-head-title">Booking Confirmed!</div>
                 <div className="suc-head-id">
                   Receipt ID: <strong>{bookingSuccess.receiptId}</strong>
+                </div>
+                <div style={{ marginTop: 10, fontFamily: "'DM Sans',sans-serif", fontSize: 0.88 + "rem", color: "#ddd" }}>
+                  Redirecting to home in {redirectSeconds} second{redirectSeconds === 1 ? "" : "s"}...
                 </div>
               </div>
 
