@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     "users",
     "items",
     "rentals",
-    "payments",
+    "payment",
     "notifications",
 ]
 
