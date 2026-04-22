@@ -119,10 +119,304 @@
 
 //---------------------------------------------
 
+// import { useState } from "react";
+// import { useAuth } from "../App";
+
+// // ─── Floating label + scrolling hint field ───────────────────────────────────
+// const Field = ({ k, label, hint, type = "text", value, onChange, showToggle }) => {
+//   const [focus, setFocus] = useState(false);
+//   const [visible, setVisible] = useState(false);
+//   const inputType = type === "password" && showToggle ? (visible ? "text" : "password") : type;
+
+//   return (
+//     <div className="qr-field">
+//       <label className={`qr-label ${focus || value ? "active" : ""}`}>{label}</label>
+
+//       {!value && !focus && (
+//         <div className="qr-scroll-hint">
+//           <span>{hint}</span>
+//         </div>
+//       )}
+
+//       <input
+//         type={inputType}
+//         value={value}
+//         className="qr-input"
+//         style={{ paddingRight: type === "password" && showToggle ? 78 : 14 }}
+//         onChange={(e) => onChange(k, e.target.value)}
+//         onFocus={() => setFocus(true)}
+//         onBlur={() => setFocus(false)}
+//       />
+
+//       {type === "password" && showToggle && (
+//         <button
+//           type="button"
+//           className="qr-password-toggle"
+//           onClick={() => setVisible((v) => !v)}
+//         >
+//           {visible ? "👁" : "🙈"}
+//         </button>
+//       )}
+//     </div>
+//   );
+// };
+
+// // ─── Helpers: accounts stored in localStorage ────────────────────────────────
+// const ACCOUNTS_KEY = "qr_accounts";
+
+// const getAccounts = () => {
+//   try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || []; }
+//   catch { return []; }
+// };
+
+// const saveAccount = (user) => {
+//   const accounts = getAccounts();
+//   // avoid duplicate emails
+//   const filtered = accounts.filter(a => a.email !== user.email);
+//   localStorage.setItem(ACCOUNTS_KEY, JSON.stringify([...filtered, user]));
+// };
+
+// const findAccount = (email) => {
+//   return getAccounts().find(a => a.email.toLowerCase() === email.toLowerCase()) || null;
+// };
+
+// // ─── Main component ───────────────────────────────────────────────────────────
+// export default function AuthModal({ mode, onClose, switchMode }) {
+//   const { handleLogin, handleSignup } = useAuth();
+
+//   const [form, setForm] = useState({
+//     name: "", email: "", phone: "", city: "", password: "", role: "renter",
+//   });
+//   const [error, setError] = useState("");
+//   const [loading, setLoading] = useState(false);
+
+//   const updateField = (k, v) => {
+//     if (k === "phone") v = v.replace(/[^0-9]/g, "").slice(0, 10);
+//     if (k === "name")  v = v.replace(/[^a-zA-Z ]/g, "");
+//     if (k === "city")  v = v.replace(/[^a-zA-Z ]/g, "");
+//     setForm((f) => ({ ...f, [k]: v }));
+//   };
+
+//   const submit = () => {
+//     setError("");
+//     const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+//     const phoneRegex = /^[0-9]{10}$/;
+
+//     // ── SIGNUP ──────────────────────────────────────────────────────────────
+//     if (mode === "signup") {
+//       if (!form.name || !form.email || !form.phone || !form.password) {
+//         setError("Please fill all required fields"); return;
+//       }
+//       if (!gmailRegex.test(form.email)) {
+//         setError("Email must end with @gmail.com"); return;
+//       }
+//       if (!phoneRegex.test(form.phone)) {
+//         setError("Phone number must be exactly 10 digits"); return;
+//       }
+//       if (form.password.length < 6) {
+//         setError("Password must be at least 6 characters"); return;
+//       }
+
+//       // Check if email already registered
+//       if (findAccount(form.email)) {
+//         setError("An account with this email already exists. Please login instead.");
+//         return;
+//       }
+
+//       setLoading(true);
+//       setTimeout(() => {
+//         const newUser = {
+//           ...form,
+//           id: Date.now(),
+//           joinedDate: new Date().toLocaleDateString("en-IN"),
+//         };
+//         // Save to accounts registry (for future logins)
+//         saveAccount(newUser);
+//         // Log the user in
+//         handleSignup(newUser);
+//         setLoading(false);
+//       }, 700);
+//     }
+
+//     // ── LOGIN ───────────────────────────────────────────────────────────────
+//     else {
+//       if (!form.email || !form.password) {
+//         setError("Please enter your email and password"); return;
+//       }
+
+//       setLoading(true);
+//       setTimeout(() => {
+//         // Look up account by email
+//         const account = findAccount(form.email);
+
+//         if (!account) {
+//           setError("No account found with this email. Please create an account first.");
+//           setLoading(false);
+//           return;
+//         }
+
+//         if (account.password !== form.password) {
+//           setError("Incorrect password. Please try again.");
+//           setLoading(false);
+//           return;
+//         }
+
+//         // ✅ Credentials match — load the FULL saved profile
+//         handleLogin(account);
+//         setLoading(false);
+//       }, 700);
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <style>{`
+//         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+//         .qr-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:2000;backdrop-filter:blur(6px);}
+//         .qr-modal{width:92%;max-width:720px;background:white;border-radius:26px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,0.25);}
+//         .qr-head{background:linear-gradient(135deg,#FF6B00,#ff8a3d);padding:40px;color:white;position:relative;}
+//         .qr-close{position:absolute;right:18px;top:18px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:18px;width:34px;height:34px;border-radius:50%;cursor:pointer;}
+//         .qr-title{font-family:'Syne';font-size:2rem;font-weight:800;}
+//         .qr-sub{font-family:'DM Sans';font-size:.95rem;opacity:.9;margin-top:6px;}
+//         .qr-body{padding:40px;}
+
+//         .qr-role{display:flex;gap:14px;margin-bottom:24px;}
+//         .qr-role-btn{flex:1;border:1.5px solid #eee;padding:14px;border-radius:14px;cursor:pointer;background:#fafafa;text-align:center;font-family:'DM Sans';}
+//         .qr-role-btn.active{border-color:#FF6B00;background:#fff3ea;color:#FF6B00;font-weight:600;}
+
+//         .qr-field{position:relative;margin-bottom:20px;}
+//         .qr-input{width:100%;padding:16px 14px;border-radius:12px;border:1.5px solid #e6e6e6;font-family:'DM Sans';font-size:.95rem;outline:none;background:white;color:#000;caret-color:#000;position:relative;z-index:2;}
+//         .qr-input:focus{border-color:#FF6B00;}
+
+//         .qr-label{position:absolute;left:14px;top:14px;font-size:.9rem;color:#999;font-family:'DM Sans';pointer-events:none;transition:.2s;background:white;padding:0 6px;z-index:3;}
+//         .qr-label.active{top:-7px;font-size:.75rem;color:#FF6B00;}
+
+//         .qr-scroll-hint{position:absolute;left:14px;right:14px;top:16px;overflow:hidden;white-space:nowrap;pointer-events:none;color:#bbb;font-size:.9rem;font-family:'DM Sans';z-index:1;}
+//         .qr-scroll-hint span{display:inline-block;padding-left:100%;animation:scrollHint 10s linear infinite;}
+//         @keyframes scrollHint{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
+
+//         .qr-password-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);border:none;background:transparent;color:#FF6B00;font-family:'DM Sans';font-size:.95rem;font-weight:700;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;z-index:3;}
+
+//         .qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+//         .qr-btn{width:100%;padding:16px;background:#FF6B00;border:none;border-radius:50px;color:white;font-family:'Syne';font-size:1rem;font-weight:700;cursor:pointer;margin-top:10px;transition:all .2s;}
+//         .qr-btn:hover{background:#e05e00;transform:translateY(-1px);}
+//         .qr-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;}
+
+//         .qr-error{background:#fff5f5;border:1px solid #ffcaca;color:#d93c3c;padding:10px 14px;border-radius:10px;margin-bottom:18px;font-family:'DM Sans';font-size:.85rem;}
+
+//         /* "No account" quick link inside error */
+//         .qr-error-link{color:#FF6B00;font-weight:600;cursor:pointer;text-decoration:underline;margin-left:4px;}
+
+//         .qr-footer-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;font-family:'DM Sans';font-size:.9rem;flex-wrap:wrap;}
+//         .qr-footer-row--center{justify-content:center;}
+//         .qr-switch{color:#666;}
+//         .qr-switch span{color:#FF6B00;font-weight:600;cursor:pointer;}
+//         .qr-forgot-button{background:none;border:none;color:#FF6B00;font-weight:700;cursor:pointer;padding:0;font-size:inherit;}
+//         .qr-forgot-button:hover{color:#e05e00;}
+
+//         @media(max-width:650px){
+//           .qr-grid{grid-template-columns:1fr;}
+//           .qr-modal{max-width:95%;}
+//           .qr-head{padding:30px;}
+//           .qr-body{padding:28px;}
+//         }
+//       `}</style>
+
+//       <div className="qr-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+//         <div className="qr-modal">
+
+//           <div className="qr-head">
+//             <button className="qr-close" onClick={onClose}>✕</button>
+//             <div className="qr-title">{mode === "signup" ? "Create Account" : "Welcome Back"}</div>
+//             <div className="qr-sub">{mode === "signup" ? "Join QuickRent today" : "Login to continue"}</div>
+//           </div>
+
+//           <div className="qr-body">
+
+//             {/* Error message — with quick switch to signup if no account found */}
+//             {error && (
+//               <div className="qr-error">
+//                 ⚠ {error}
+//                 {error.includes("No account found") && (
+//                   <span className="qr-error-link" onClick={() => { setError(""); switchMode("signup"); }}>
+//                     Sign up here
+//                   </span>
+//                 )}
+//                 {error.includes("already exists") && (
+//                   <span className="qr-error-link" onClick={() => { setError(""); switchMode("login"); }}>
+//                     Login here
+//                   </span>
+//                 )}
+//               </div>
+//             )}
+
+//             {/* Role selector — signup only */}
+//             {mode === "signup" && (
+//               <div className="qr-role">
+//                 <div className={`qr-role-btn ${form.role === "renter" ? "active" : ""}`} onClick={() => updateField("role", "renter")}>
+//                   🔑 Rent Items
+//                 </div>
+//                 <div className={`qr-role-btn ${form.role === "lister" ? "active" : ""}`} onClick={() => updateField("role", "lister")}>
+//                   🏠 List Items
+//                 </div>
+//               </div>
+//             )}
+
+//             {/* Signup-only fields */}
+//             {mode === "signup" && (
+//               <div className="qr-grid">
+//                 <Field k="name"  label="Full Name"     hint="Enter your full name"        value={form.name}  onChange={updateField} />
+//                 <Field k="phone" label="Phone Number"  hint="Enter 10 digit phone number" value={form.phone} onChange={updateField} />
+//               </div>
+//             )}
+
+//             <Field k="email"    label="Email Address" hint="example@gmail.com"           value={form.email}    onChange={updateField} />
+//             {mode === "signup" && (
+//               <Field k="city"   label="City"           hint="Enter your city"             value={form.city}     onChange={updateField} />
+//             )}
+//             <Field k="password" label="Password"       hint="Use letters, numbers & symbols" type="password" value={form.password} onChange={updateField} showToggle />
+
+//             <button className="qr-btn" onClick={submit} disabled={loading}>
+//               {loading ? "Please wait..." : mode === "signup" ? "Create Account →" : "Login →"}
+//             </button>
+
+//             <div className={`qr-footer-row ${mode === "signup" ? "qr-footer-row--center" : ""}`}>
+//               {mode === "login" ? (
+//                 <>
+//                   <button
+//                     type="button"
+//                     className="qr-forgot-button"
+//                     onClick={() => { setError(""); switchMode("forgot"); }}
+//                   >
+//                     Forgot password?
+//                   </button>
+//                   <div className="qr-switch">
+//                     New here? <span onClick={() => { setError(""); switchMode("signup"); }}>Create account</span>
+//                   </div>
+//                 </>
+//               ) : (
+//                 <div className="qr-switch">
+//                   Already have an account? <span onClick={() => { setError(""); switchMode("login"); }}>Login</span>
+//                 </div>
+//               )}
+//             </div>
+
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+//the issue is the table contetn in not passign in the db. so we have new code for the booking form which is as follows:
+//the new code is as follows; 
+
 import { useState } from "react";
 import { useAuth } from "../App";
+import { authAPI } from "../utils/api";
 
-// ─── Floating label + scrolling hint field ───────────────────────────────────
 const Field = ({ k, label, hint, type = "text", value, onChange, showToggle }) => {
   const [focus, setFocus] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -131,13 +425,9 @@ const Field = ({ k, label, hint, type = "text", value, onChange, showToggle }) =
   return (
     <div className="qr-field">
       <label className={`qr-label ${focus || value ? "active" : ""}`}>{label}</label>
-
       {!value && !focus && (
-        <div className="qr-scroll-hint">
-          <span>{hint}</span>
-        </div>
+        <div className="qr-scroll-hint"><span>{hint}</span></div>
       )}
-
       <input
         type={inputType}
         value={value}
@@ -147,13 +437,9 @@ const Field = ({ k, label, hint, type = "text", value, onChange, showToggle }) =
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
       />
-
       {type === "password" && showToggle && (
-        <button
-          type="button"
-          className="qr-password-toggle"
-          onClick={() => setVisible((v) => !v)}
-        >
+        <button type="button" className="qr-password-toggle"
+          onClick={() => setVisible((p) => !p)}>
           {visible ? "👁" : "🙈"}
         </button>
       )}
@@ -161,33 +447,13 @@ const Field = ({ k, label, hint, type = "text", value, onChange, showToggle }) =
   );
 };
 
-// ─── Helpers: accounts stored in localStorage ────────────────────────────────
-const ACCOUNTS_KEY = "qr_accounts";
-
-const getAccounts = () => {
-  try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || []; }
-  catch { return []; }
-};
-
-const saveAccount = (user) => {
-  const accounts = getAccounts();
-  // avoid duplicate emails
-  const filtered = accounts.filter(a => a.email !== user.email);
-  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify([...filtered, user]));
-};
-
-const findAccount = (email) => {
-  return getAccounts().find(a => a.email.toLowerCase() === email.toLowerCase()) || null;
-};
-
-// ─── Main component ───────────────────────────────────────────────────────────
 export default function AuthModal({ mode, onClose, switchMode }) {
-  const { handleLogin, handleSignup } = useAuth();
+  const { handleLogin } = useAuth();
 
   const [form, setForm] = useState({
     name: "", email: "", phone: "", city: "", password: "", role: "renter",
   });
-  const [error, setError] = useState("");
+  const [error, setError]   = useState("");
   const [loading, setLoading] = useState(false);
 
   const updateField = (k, v) => {
@@ -197,7 +463,7 @@ export default function AuthModal({ mode, onClose, switchMode }) {
     setForm((f) => ({ ...f, [k]: v }));
   };
 
-  const submit = () => {
+  const submit = async () => {
     setError("");
     const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     const phoneRegex = /^[0-9]{10}$/;
@@ -217,116 +483,94 @@ export default function AuthModal({ mode, onClose, switchMode }) {
         setError("Password must be at least 6 characters"); return;
       }
 
-      // Check if email already registered
-      if (findAccount(form.email)) {
-        setError("An account with this email already exists. Please login instead.");
-        return;
-      }
-
       setLoading(true);
-      setTimeout(() => {
-        const newUser = {
-          ...form,
-          id: Date.now(),
-          joinedDate: new Date().toLocaleDateString("en-IN"),
-        };
-        // Save to accounts registry (for future logins)
-        saveAccount(newUser);
-        // Log the user in
-        handleSignup(newUser);
+      try {
+        const res = await authAPI.register({
+          name:     form.name,
+          email:    form.email,
+          phone:    form.phone,
+          city:     form.city,
+          password: form.password,
+          role:     form.role,
+        });
+
+        const { user, tokens } = res.data;
+        localStorage.setItem("qr_tokens", JSON.stringify(tokens));
+        localStorage.setItem("qr_user",   JSON.stringify(user));
+        handleLogin(user);
+        onClose();
+      } catch (err) {
+        const data = err.response?.data;
+        if (data?.email)             setError(data.email[0]);
+        else if (data?.password)     setError(data.password[0]);
+        else if (data?.non_field_errors) setError(data.non_field_errors[0]);
+        else setError("Registration failed. Please try again.");
+      } finally {
         setLoading(false);
-      }, 700);
-    }
+      }
 
     // ── LOGIN ───────────────────────────────────────────────────────────────
-    else {
+    } else {
       if (!form.email || !form.password) {
-        setError("Please enter your email and password"); return;
+        setError("Enter email and password"); return;
       }
 
       setLoading(true);
-      setTimeout(() => {
-        // Look up account by email
-        const account = findAccount(form.email);
+      try {
+        const res = await authAPI.login({
+          email:    form.email,
+          password: form.password,
+        });
 
-        if (!account) {
-          setError("No account found with this email. Please create an account first.");
-          setLoading(false);
-          return;
-        }
-
-        if (account.password !== form.password) {
-          setError("Incorrect password. Please try again.");
-          setLoading(false);
-          return;
-        }
-
-        // ✅ Credentials match — load the FULL saved profile
-        handleLogin(account);
+        const { user, tokens } = res.data;
+        localStorage.setItem("qr_tokens", JSON.stringify(tokens));
+        localStorage.setItem("qr_user",   JSON.stringify(user));
+        handleLogin(user);
+        onClose();
+      } catch (err) {
+        const data = err.response?.data;
+        if (data?.non_field_errors) setError(data.non_field_errors[0]);
+        else setError("Invalid email or password.");
+      } finally {
         setLoading(false);
-      }, 700);
+      }
     }
   };
 
   return (
     <div>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
-
-        .qr-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:2000;backdrop-filter:blur(6px);}
-        .qr-modal{width:92%;max-width:720px;background:white;border-radius:26px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,0.25);}
-        .qr-head{background:linear-gradient(135deg,#FF6B00,#ff8a3d);padding:40px;color:white;position:relative;}
-        .qr-close{position:absolute;right:18px;top:18px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:18px;width:34px;height:34px;border-radius:50%;cursor:pointer;}
-        .qr-title{font-family:'Syne';font-size:2rem;font-weight:800;}
-        .qr-sub{font-family:'DM Sans';font-size:.95rem;opacity:.9;margin-top:6px;}
-        .qr-body{padding:40px;}
-
-        .qr-role{display:flex;gap:14px;margin-bottom:24px;}
-        .qr-role-btn{flex:1;border:1.5px solid #eee;padding:14px;border-radius:14px;cursor:pointer;background:#fafafa;text-align:center;font-family:'DM Sans';}
-        .qr-role-btn.active{border-color:#FF6B00;background:#fff3ea;color:#FF6B00;font-weight:600;}
-
-        .qr-field{position:relative;margin-bottom:20px;}
-        .qr-input{width:100%;padding:16px 14px;border-radius:12px;border:1.5px solid #e6e6e6;font-family:'DM Sans';font-size:.95rem;outline:none;background:white;color:#000;caret-color:#000;position:relative;z-index:2;}
-        .qr-input:focus{border-color:#FF6B00;}
-
-        .qr-label{position:absolute;left:14px;top:14px;font-size:.9rem;color:#999;font-family:'DM Sans';pointer-events:none;transition:.2s;background:white;padding:0 6px;z-index:3;}
-        .qr-label.active{top:-7px;font-size:.75rem;color:#FF6B00;}
-
-        .qr-scroll-hint{position:absolute;left:14px;right:14px;top:16px;overflow:hidden;white-space:nowrap;pointer-events:none;color:#bbb;font-size:.9rem;font-family:'DM Sans';z-index:1;}
-        .qr-scroll-hint span{display:inline-block;padding-left:100%;animation:scrollHint 10s linear infinite;}
-        @keyframes scrollHint{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
-
-        .qr-password-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);border:none;background:transparent;color:#FF6B00;font-family:'DM Sans';font-size:.95rem;font-weight:700;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;z-index:3;}
-
-        .qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-
-        .qr-btn{width:100%;padding:16px;background:#FF6B00;border:none;border-radius:50px;color:white;font-family:'Syne';font-size:1rem;font-weight:700;cursor:pointer;margin-top:10px;transition:all .2s;}
-        .qr-btn:hover{background:#e05e00;transform:translateY(-1px);}
-        .qr-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;}
-
-        .qr-error{background:#fff5f5;border:1px solid #ffcaca;color:#d93c3c;padding:10px 14px;border-radius:10px;margin-bottom:18px;font-family:'DM Sans';font-size:.85rem;}
-
-        /* "No account" quick link inside error */
-        .qr-error-link{color:#FF6B00;font-weight:600;cursor:pointer;text-decoration:underline;margin-left:4px;}
-
-        .qr-footer-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;font-family:'DM Sans';font-size:.9rem;flex-wrap:wrap;}
-        .qr-footer-row--center{justify-content:center;}
-        .qr-switch{color:#666;}
-        .qr-switch span{color:#FF6B00;font-weight:600;cursor:pointer;}
-        .qr-forgot-button{background:none;border:none;color:#FF6B00;font-weight:700;cursor:pointer;padding:0;font-size:inherit;}
-        .qr-forgot-button:hover{color:#e05e00;}
-
-        @media(max-width:650px){
-          .qr-grid{grid-template-columns:1fr;}
-          .qr-modal{max-width:95%;}
-          .qr-head{padding:30px;}
-          .qr-body{padding:28px;}
-        }
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+.qr-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:2000;backdrop-filter:blur(6px);}
+.qr-modal{width:92%;max-width:720px;background:white;border-radius:26px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,0.25);}
+.qr-head{background:linear-gradient(135deg,#FF6B00,#ff8a3d);padding:40px;color:white;position:relative;}
+.qr-close{position:absolute;right:18px;top:18px;background:rgba(255,255,255,0.2);border:none;color:white;font-size:18px;width:34px;height:34px;border-radius:50%;cursor:pointer;}
+.qr-title{font-family:'Syne';font-size:2rem;font-weight:800;}
+.qr-sub{font-family:'DM Sans';font-size:.95rem;opacity:.9;margin-top:6px;}
+.qr-body{padding:40px;}
+.qr-role{display:flex;gap:14px;margin-bottom:24px;}
+.qr-role-btn{flex:1;border:1.5px solid #eee;padding:14px;border-radius:14px;cursor:pointer;background:#fafafa;text-align:center;font-family:'DM Sans';}
+.qr-role-btn.active{border-color:#FF6B00;background:#fff3ea;color:#FF6B00;font-weight:600;}
+.qr-field{position:relative;margin-bottom:20px;}
+.qr-input{width:100%;padding:16px 14px;border-radius:12px;border:1.5px solid #e6e6e6;font-family:'DM Sans';font-size:.95rem;outline:none;background:white;color:#000;caret-color:#000;position:relative;z-index:2;box-sizing:border-box;}
+.qr-input:focus{border-color:#FF6B00;}
+.qr-password-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);border:none;background:transparent;color:#FF6B00;font-size:.95rem;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;z-index:3;}
+.qr-label{position:absolute;left:14px;top:14px;font-size:.9rem;color:#999;font-family:'DM Sans';pointer-events:none;transition:.2s;background:white;padding:0 6px;z-index:3;}
+.qr-label.active{top:-7px;font-size:.75rem;color:#FF6B00;}
+.qr-scroll-hint{position:absolute;left:14px;right:14px;top:16px;overflow:hidden;white-space:nowrap;pointer-events:none;color:#bbb;font-size:.9rem;font-family:'DM Sans';z-index:1;}
+.qr-scroll-hint span{display:inline-block;padding-left:100%;animation:scrollHint 10s linear infinite;}
+@keyframes scrollHint{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
+.qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.qr-btn{width:100%;padding:16px;background:#FF6B00;border:none;border-radius:50px;color:white;font-family:'Syne';font-size:1rem;cursor:pointer;margin-top:10px;}
+.qr-btn:disabled{background:#ccc;cursor:not-allowed;}
+.qr-error{background:#fff5f5;border:1px solid #ffcaca;color:#d93c3c;padding:10px 14px;border-radius:10px;margin-bottom:18px;font-family:'DM Sans';font-size:.85rem;}
+.qr-switch{text-align:center;margin-top:18px;font-family:'DM Sans';font-size:.9rem;}
+.qr-switch span{color:#FF6B00;font-weight:600;cursor:pointer;}
+@media(max-width:650px){.qr-grid{grid-template-columns:1fr;}.qr-modal{max-width:95%;}.qr-head,.qr-body{padding:28px;}}
       `}</style>
 
       <div className="qr-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
         <div className="qr-modal">
-
           <div className="qr-head">
             <button className="qr-close" onClick={onClose}>✕</button>
             <div className="qr-title">{mode === "signup" ? "Create Account" : "Welcome Back"}</div>
@@ -334,75 +578,40 @@ export default function AuthModal({ mode, onClose, switchMode }) {
           </div>
 
           <div className="qr-body">
-
-            {/* Error message — with quick switch to signup if no account found */}
-            {error && (
-              <div className="qr-error">
-                ⚠ {error}
-                {error.includes("No account found") && (
-                  <span className="qr-error-link" onClick={() => { setError(""); switchMode("signup"); }}>
-                    Sign up here
-                  </span>
-                )}
-                {error.includes("already exists") && (
-                  <span className="qr-error-link" onClick={() => { setError(""); switchMode("login"); }}>
-                    Login here
-                  </span>
-                )}
-              </div>
-            )}
+            {error && <div className="qr-error">⚠ {error}</div>}
 
             {/* Role selector — signup only */}
             {mode === "signup" && (
               <div className="qr-role">
-                <div className={`qr-role-btn ${form.role === "renter" ? "active" : ""}`} onClick={() => updateField("role", "renter")}>
-                  🔑 Rent Items
-                </div>
-                <div className={`qr-role-btn ${form.role === "lister" ? "active" : ""}`} onClick={() => updateField("role", "lister")}>
-                  🏠 List Items
-                </div>
+                <div className={`qr-role-btn ${form.role === "renter" ? "active" : ""}`}
+                  onClick={() => updateField("role", "renter")}>🔑 Rent Items</div>
+                <div className={`qr-role-btn ${form.role === "lister" ? "active" : ""}`}
+                  onClick={() => updateField("role", "lister")}>🏠 List Items</div>
               </div>
             )}
 
-            {/* Signup-only fields */}
             {mode === "signup" && (
               <div className="qr-grid">
-                <Field k="name"  label="Full Name"     hint="Enter your full name"        value={form.name}  onChange={updateField} />
-                <Field k="phone" label="Phone Number"  hint="Enter 10 digit phone number" value={form.phone} onChange={updateField} />
+                <Field k="name"  label="Full Name"    hint="Enter your full name"        value={form.name}  onChange={updateField} />
+                <Field k="phone" label="Phone Number" hint="Enter 10 digit phone number" value={form.phone} onChange={updateField} />
               </div>
             )}
 
-            <Field k="email"    label="Email Address" hint="example@gmail.com"           value={form.email}    onChange={updateField} />
+            <Field k="email"    label="Email Address" hint="example@gmail.com"             value={form.email}    onChange={updateField} />
             {mode === "signup" && (
-              <Field k="city"   label="City"           hint="Enter your city"             value={form.city}     onChange={updateField} />
+              <Field k="city"   label="City"           hint="Enter your city"              value={form.city}     onChange={updateField} />
             )}
-            <Field k="password" label="Password"       hint="Use letters, numbers & symbols" type="password" value={form.password} onChange={updateField} showToggle />
+            <Field k="password" label="Password"       hint="Min 6 characters"            value={form.password} onChange={updateField} type="password" showToggle />
 
             <button className="qr-btn" onClick={submit} disabled={loading}>
               {loading ? "Please wait..." : mode === "signup" ? "Create Account →" : "Login →"}
             </button>
 
-            <div className={`qr-footer-row ${mode === "signup" ? "qr-footer-row--center" : ""}`}>
-              {mode === "login" ? (
-                <>
-                  <button
-                    type="button"
-                    className="qr-forgot-button"
-                    onClick={() => { setError(""); switchMode("forgot"); }}
-                  >
-                    Forgot password?
-                  </button>
-                  <div className="qr-switch">
-                    New here? <span onClick={() => { setError(""); switchMode("signup"); }}>Create account</span>
-                  </div>
-                </>
-              ) : (
-                <div className="qr-switch">
-                  Already have an account? <span onClick={() => { setError(""); switchMode("login"); }}>Login</span>
-                </div>
-              )}
+            <div className="qr-switch">
+              {mode === "signup"
+                ? <div>Already have an account? <span onClick={() => switchMode("login")}>Login</span></div>
+                : <div>New here? <span onClick={() => switchMode("signup")}>Create account</span></div>}
             </div>
-
           </div>
         </div>
       </div>
