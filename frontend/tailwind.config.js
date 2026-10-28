@@ -18,9 +18,26 @@ export default {
           bg: "#FAF9F8",
           star: "#F59E0B",
         },
+        store: {
+          forest: "#0E2721",
+          forestHover: "#163A32",
+          bg: "#FAF9F5",
+          card: "#FFFFFF",
+          border: "#E8E4DC",
+          heading: "#1A1E20",
+          body: "#575D60",
+          gold: "#F59E0B",
+          badge: "#EBF3F0",
+        },
       },
       fontFamily: {
+        editorial: [
+          '"Playfair Display"',
+          "Georgia",
+          "serif",
+        ],
         sans: [
+          '"Plus Jakarta Sans"',
           "-apple-system",
           "BlinkMacSystemFont",
           '"Segoe UI"',

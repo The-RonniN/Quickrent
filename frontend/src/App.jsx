@@ -15,12 +15,18 @@ import ForgotPassword from "./components/ForgotPassword";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 import ErrorBoundary from "./middleware/ErrorBoundary";
 import { useAuth } from "./context/AuthContext";
+import { useTheme } from "./context/ThemeContext";
 import { useItems } from "./hooks/useItems";
 import { useRentals } from "./hooks/useRentals";
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import StorefrontTopBar from "./components/storefront/StorefrontTopBar";
+import StorefrontNavbar from "./components/storefront/StorefrontNavbar";
+import StorefrontFooter from "./components/storefront/StorefrontFooter";
+import ThemeToggle from "./components/ThemeToggle";
 
 export default function App() {
   const { user, updateUserRole } = useAuth();
+  const { isStorefront, theme, toggleTheme } = useTheme();
   const { items, addItem } = useItems();
   const { rentals, bookItem } = useRentals(user?.id);
   const [wishlist, setWishlist] = useLocalStorage("qr_wishlist", []);
@@ -29,6 +35,8 @@ export default function App() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [authModal, setAuthModal] = useState(null); // 'login' | 'signup' | 'forgot' | null
   const [profileDefaultTab, setProfileDefaultTab] = useState("overview");
+  const [rentInitialCategory, setRentInitialCategory] = useState("All");
+  const [rentInitialSearch, setRentInitialSearch] = useState("");
 
   const navigate = (page, params = {}) => {
     if (params?.item) {
@@ -39,6 +47,16 @@ export default function App() {
 
     if (params?.tab) {
       setProfileDefaultTab(params.tab);
+    }
+
+    if (params?.category) {
+      setRentInitialCategory(params.category);
+    } else if (page === "rent" && !params?.category) {
+      setRentInitialCategory("All");
+    }
+
+    if (params?.search !== undefined) {
+      setRentInitialSearch(params.search);
     }
 
     setCurrentPage(page);
@@ -53,14 +71,26 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex flex-col bg-brand-bg text-brand-dark">
-        {/* Fixed Navbar */}
-        <Navbar
-          currentPage={currentPage}
-          navigate={navigate}
-          openAuth={setAuthModal}
-          wishlistCount={wishlist.length}
-        />
+      <div className={`min-h-screen flex flex-col ${isStorefront ? "bg-[#FAF9F5] text-[#1A1E20]" : "bg-brand-bg text-brand-dark"}`}>
+        {/* Top Utility Announcement Bar (Storefront Theme) */}
+        {isStorefront && <StorefrontTopBar />}
+
+        {/* Dynamic Theme Navbar */}
+        {isStorefront ? (
+          <StorefrontNavbar
+            currentPage={currentPage}
+            navigate={navigate}
+            openAuth={setAuthModal}
+            wishlistCount={wishlist.length}
+          />
+        ) : (
+          <Navbar
+            currentPage={currentPage}
+            navigate={navigate}
+            openAuth={setAuthModal}
+            wishlistCount={wishlist.length}
+          />
+        )}
 
         {/* Dynamic Route View */}
         <div className="flex-grow">
@@ -84,6 +114,8 @@ export default function App() {
               onBookItem={bookItem}
               openAuth={setAuthModal}
               user={user}
+              initialCategory={rentInitialCategory}
+              initialSearch={rentInitialSearch}
             />
           )}
 
@@ -132,9 +164,19 @@ export default function App() {
           />
         )}
 
-        {/* Global Footer */}
-        <Footer navigate={navigate} />
+        {/* Dynamic Theme Footer */}
+        {isStorefront ? (
+          <StorefrontFooter navigate={navigate} />
+        ) : (
+          <Footer navigate={navigate} />
+        )}
+
+        {/* Floating Theme Switcher Widget */}
+        <div className="fixed bottom-5 right-5 z-50 bg-white/95 backdrop-blur-md rounded-full shadow-2xl p-1 border border-gray-200/80 flex items-center">
+          <ThemeToggle variant="segmented" />
+        </div>
       </div>
     </ErrorBoundary>
   );
 }
+

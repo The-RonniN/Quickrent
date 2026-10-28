@@ -20,12 +20,22 @@ export default function RentPage({
   onBookItem,
   openAuth,
   user,
+  initialCategory = "All",
+  initialSearch = "",
 }) {
-  const [search, setSearch] = useState("");
-  const [selectedCat, setSelectedCat] = useState("All");
+  const [search, setSearch] = useState(initialSearch || "");
+  const [selectedCat, setSelectedCat] = useState(initialCategory || "All");
   const [selectedCity, setSelectedCity] = useState("All");
   const [sortBy, setSortBy] = useState("newest");
   const [bookingSuccess, setBookingSuccess] = useState(null);
+
+  React.useEffect(() => {
+    if (initialCategory) setSelectedCat(initialCategory);
+  }, [initialCategory]);
+
+  React.useEffect(() => {
+    if (initialSearch !== undefined) setSearch(initialSearch);
+  }, [initialSearch]);
 
   // Booking Form State for Selected Item
   const today = new Date().toISOString().split("T")[0];

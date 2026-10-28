@@ -1,12 +1,49 @@
-// frontend/src/pages/Hero.jsx
 import React, { useState } from "react";
 import ListingCard from "../components/ListingCard";
+import { useTheme } from "../context/ThemeContext";
+import StorefrontHero from "../components/storefront/StorefrontHero";
+import StorefrontCategoryRow from "../components/storefront/StorefrontCategoryRow";
+import StorefrontFeaturedProducts from "../components/storefront/StorefrontFeaturedProducts";
+import StorefrontPromoBanners from "../components/storefront/StorefrontPromoBanners";
+import StorefrontTrustStrip from "../components/storefront/StorefrontTrustStrip";
+import StorefrontTestimonials from "../components/storefront/StorefrontTestimonials";
 
 export default function Hero({ items, onSelectItem, onToggleWishlist, wishlist = [], navigate }) {
+  const { isStorefront } = useTheme();
   const [selectedVideo, setSelectedVideo] = useState(false);
   const [consultOpen, setConsultOpen] = useState(false);
   const [consultSubmitted, setConsultSubmitted] = useState(false);
   const [consultPhone, setConsultPhone] = useState("");
+
+  if (isStorefront) {
+    return (
+      <div className="w-full bg-[#FAF9F5] text-[#1A1E20]">
+        {/* 1. Hero Split Section: Dynamic Sidebar Categories + Showcase Banner */}
+        <StorefrontHero items={items} navigate={navigate} />
+
+        {/* 2. Sub-Hero Quick Browsing 6-Card Category Row */}
+        <StorefrontCategoryRow items={items} navigate={navigate} />
+
+        {/* 3. Featured Products Carousel with Badges, Ratings, and Dark Cart Button */}
+        <StorefrontFeaturedProducts
+          items={items}
+          onSelectItem={onSelectItem}
+          onToggleWishlist={onToggleWishlist}
+          wishlist={wishlist}
+          navigate={navigate}
+        />
+
+        {/* 4. Dual Split Collection Promo Banners */}
+        <StorefrontPromoBanners navigate={navigate} />
+
+        {/* 5. 4-Pillar Service & Trust Benefits Strip */}
+        <StorefrontTrustStrip />
+
+        {/* 6. Customer Reviews & Testimonials Section */}
+        <StorefrontTestimonials navigate={navigate} />
+      </div>
+    );
+  }
 
   const trendingItems = items.slice(0, 4);
   const latestArrivals = items.slice(0, 8);
